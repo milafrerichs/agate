@@ -46,6 +46,18 @@ class TestAggregate(AgateTestCase):
             ('table3', Table(self.table3, self.column_names, self.column_types))
         ])
 
+    def test_aggregate_summary(self):
+        tableset = TableSet(self.tables.values(), self.tables.keys(), key_name='test')
+        sumary = Summary('count', Number(),  lambda r: sum(number > 1 for number in r.values()))
+
+        new_table = tableset.aggregate([
+            sumary
+        ])
+
+        self.assertIsInstance(new_table, Table)
+        self.assertColumnNames(new_table, ('test', 'count'))
+        self.assertColumnTypes(new_table, [Text, Number])
+
     def test_aggregate_key_name(self):
         tableset = TableSet(self.tables.values(), self.tables.keys(), key_name='test')
 
